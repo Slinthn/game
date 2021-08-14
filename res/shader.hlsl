@@ -4,13 +4,13 @@ cbuffer CBUF0 : register(b0) {
   matrix<float, 4, 4> camera;
 };
 
-struct VSIn {
+struct VSIN {
   float3 position : POSITION;
   float3 normal : NORMAL;
   float2 texturepos : TEXTURE;
 };
 
-struct PSIn {
+struct PSIN {
   float4 position : SV_POSITION;
   float2 texturepos : TEXTURE;
 };
@@ -18,14 +18,14 @@ struct PSIn {
 Texture2D shadertexture;
 SamplerState samplerstate;
 
-PSIn VertexMain(VSIn input) {
-  PSIn output;
-  output.position = mul(mul(mul(float4(input.position, 1), transform), camera), view);
-  output.texturepos = input.texturepos;
-
-  return output;
+PSIN VertexMain(VSIN input) {
+  PSIN result;
+  result.position = mul(mul(mul(float4(input.position, 1), transform), camera), view);
+  result.texturepos = input.texturepos;
+  return result;
 }
 
-float4 PixelMain(PSIn input) : SV_TARGET {
-  return shadertexture.Sample(samplerstate, input.texturepos);
+float4 PixelMain(PSIN input) : SV_TARGET {
+  float4 colour = shadertexture.Sample(samplerstate, input.texturepos);
+  return colour;
 }
